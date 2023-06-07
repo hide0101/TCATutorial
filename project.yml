@@ -11,6 +11,10 @@ settings:
       CLANG_CXX_LANGUAGE_STANDARD: gnu++20
       IPHONEOS_DEPLOYMENT_TARGET: '16.2'
       SDKROOT: iphoneos
+packages:
+  ComposableArchitecture:
+    url: https://github.com/pointfreeco/swift-composable-architecture
+    majorVersion: 0.54.0
 targets:
   TCATutorial:
     platform: iOS
@@ -58,6 +62,9 @@ targets:
     - name: TCATutorial
       path: TCATutorial
     type: application
+    dependencies:
+      - package: ComposableArchitecture
+        product: ComposableArchitecture
   TCATutorialTests:
     dependencies:
     - target: TCATutorial
