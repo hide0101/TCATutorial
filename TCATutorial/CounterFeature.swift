@@ -44,12 +44,14 @@ struct CounterView: View {
                     .cornerRadius(10)
                 HStack {
                     Button("-") {
+                        viewStore.send(.decrementButtonTapped)
                     }
                     .font(.largeTitle)
                     .padding()
                     .background(Color.black.opacity(0.1))
                     .cornerRadius(10)
                     Button("+") {
+                        viewStore.send(.incrementButtonTapped)
                     }
                     .font(.largeTitle)
                     .padding()
@@ -59,5 +61,18 @@ struct CounterView: View {
                 }
             }
         }
+    }
+}
+
+struct CounterPreview: PreviewProvider {
+    static var previews: some View {
+        CounterView(
+            store: Store(
+                initialState: CounterFeature.State(),
+                reducer: {
+                    CounterFeature()
+                }
+            )
+        )
     }
 }
