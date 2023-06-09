@@ -6,7 +6,9 @@
 //
 
 import ComposableArchitecture
+import SwiftUI
 
+extension CounterFeature.State: Equatable {}
 struct CounterFeature: ReducerProtocol {
     struct State {
         var count = 0
@@ -25,6 +27,37 @@ struct CounterFeature: ReducerProtocol {
         case.incrementButtonTapped:
             state.count += 1
             return .none
+        }
+    }
+}
+
+struct CounterView: View {
+    let store: StoreOf<CounterFeature>
+    
+    var body: some View {
+        WithViewStore(self.store, observe: { $0 }) { viewStore in
+            VStack {
+                Text("0")
+                    .font(.largeTitle)
+                    .padding()
+                    .background(Color.black.opacity(0.1))
+                    .cornerRadius(10)
+                HStack {
+                    Button("-") {
+                    }
+                    .font(.largeTitle)
+                    .padding()
+                    .background(Color.black.opacity(0.1))
+                    .cornerRadius(10)
+                    Button("+") {
+                    }
+                    .font(.largeTitle)
+                    .padding()
+                    .background(Color.black.opacity(0.1))
+                    .cornerRadius(10)
+                    
+                }
+            }
         }
     }
 }
