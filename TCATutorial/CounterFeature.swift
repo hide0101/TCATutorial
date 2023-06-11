@@ -14,6 +14,7 @@ struct CounterFeature: ReducerProtocol {
         var count = 0
         var fact: String?
         var isLoading = false
+        var isTimerRunnning = false
     }
     
     enum Action {
@@ -21,7 +22,11 @@ struct CounterFeature: ReducerProtocol {
         case factButtonTapped
         case factResponse(String)
         case incrementButtonTapped
+        case timerTick
+        case toggleTimerButtonTapped
     }
+    
+    enum CancelID { case timer }
     
     func reduce(into state: inout State, action: Action) -> EffectTask<Action> {
         switch action {
@@ -48,6 +53,26 @@ struct CounterFeature: ReducerProtocol {
             state.count += 1
             state.fact = nil
             return .none
+            
+        case .timerTick:
+            state.count += 1
+            state.fact = nil
+            return .none
+        
+        case .toggleTimerButtonTapped:
+            state.isTimerRunnning.toggle()
+            if state.isTimerRunnning {
+                return .run { send in
+                    while true {
+                        try await Task.sleep(for: .seconds(1))
+                        await send(.timerTick)
+                    }
+                }
+                .cancellable(id: CancelID.timer)
+            } else {
+                return .cancel(id: CancelID.timer)
+            }
+            
         }
     }
 }
@@ -79,6 +104,14 @@ struct CounterView: View {
                     .background(Color.black.opacity(0.1))
                     .cornerRadius(10)
                 }
+                Button(viewStore.isTimerRunnning ? "Stop timer" : "Start timer") {
+                    viewStore.send(.toggleTimerButtonTapped)
+                }
+                .font(.largeTitle)
+                .padding()
+                .background(Color.black.opacity(0.1))
+                .cornerRadius(10)
+                
                 Button("Fact") {
                     viewStore.send(.factButtonTapped)
                 }
