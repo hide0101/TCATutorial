@@ -9,6 +9,8 @@ import ComposableArchitecture
 import SwiftUI
 
 extension CounterFeature.State: Equatable {}
+extension CounterFeature.Action: Equatable {}
+
 struct CounterFeature: ReducerProtocol {
     struct State {
         var count = 0
@@ -27,6 +29,8 @@ struct CounterFeature: ReducerProtocol {
     }
     
     enum CancelID { case timer }
+    
+    @Dependency(\.continuousClock) var clock
     
     func reduce(into state: inout State, action: Action) -> EffectTask<Action> {
         switch action {
@@ -63,8 +67,7 @@ struct CounterFeature: ReducerProtocol {
             state.isTimerRunnning.toggle()
             if state.isTimerRunnning {
                 return .run { send in
-                    while true {
-                        try await Task.sleep(for: .seconds(1))
+                    for await _ in self.clock.timer(interval: .seconds(1)) {
                         await send(.timerTick)
                     }
                 }
